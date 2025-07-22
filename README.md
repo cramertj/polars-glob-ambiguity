@@ -61,3 +61,28 @@ However, it *also* includes a (circular) [`pub` reexport of the dsl::* types](ht
 
 Based on the (incomplete) [Rust reference section on `use`](https://doc.rust-lang.org/reference/items/use-declarations.html#ambiguities),
 I would expect an ambiguity error rather than a privacy error.
+
+That said, it would also make sense to allow this exmaple to work and access the public item, as occurs here:
+
+```rust
+mod priv_fn {
+    fn some_fn() {
+        println!("private")
+    }
+}
+
+mod pub_fn {
+    pub fn some_fn() {
+        println!("public")
+    }
+}
+
+mod reexport_both {
+    pub use crate::priv_fn::*;
+    pub use crate::pub_fn::*;
+}
+
+fn main() {
+    reexport_both::some_fn();  // prints "public"
+}
+```
